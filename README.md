@@ -1,8 +1,8 @@
 # IUK climate resilient UK hop collaboration 
 
-# Dr Helen Cockerton (UoK)
-# Dr Klara Hajdu (Wye Hops)
-# Dr John Connell (NIAB)
+#Dr Helen Cockerton (UoK)
+#Dr Klara Hajdu (Wye Hops)
+#Dr John Connell (NIAB)
 
 
                                                                                                  
