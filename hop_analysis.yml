@@ -1,0 +1,8 @@
+name: hop_analysis
+channels:
+    - conda-forge
+    - bioconda 
+dependencies:
+    - trimgalore
+    - bwa
+    - python 
