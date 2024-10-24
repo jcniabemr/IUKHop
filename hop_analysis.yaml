@@ -3,6 +3,9 @@ channels:
     - conda-forge
     - bioconda 
 dependencies:
-    - trimgalore
+    - python=3.9
+    - fastqc
+    - fastp
+    - samtools  
     - bwa
-    - python 
+    - bcftools 
