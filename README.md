@@ -36,6 +36,10 @@ Dr Helen Cockerton (UoK), Dr Klara Hajdu (Wye Hops), Dr John Connell (NIAB)
                                                     @@   @@                                      
                                                       &@@       
 
+The reference assembly was downloaded from: 
+	
+	https://hopbase.org/content/cascadeDovetail/assemblyData/dovetailCascade10ScaffoldsUnmasked.fasta.gz
+
 
 Download raw data from DArT-Seq:
 	
