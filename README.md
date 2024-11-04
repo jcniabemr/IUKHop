@@ -41,7 +41,7 @@ The reference assembly was downloaded from:
 	https://hopbase.org/content/cascadeDovetail/assemblyData/dovetailCascade10ScaffoldsUnmasked.fasta.gz
 
 
-Download raw data from DArT-Seq:
+The raw DArTseq data was download from:
 	
   	wget --header 'Authorization: Bearer HIDDEN_KEY' -r -nd -nH --include-directories=clients https://ordering.diversityarrays.com/list_files.pl
 
@@ -59,6 +59,6 @@ Run analysis pipeline:
 	sbatch hop_genotyping/hop_analysis.sh
 
 
-Create gene annotations 
+Create gene annotations: 
 
 	sbatch gene_prediction/hop_gene_prediction.sh 

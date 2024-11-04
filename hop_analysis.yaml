@@ -9,3 +9,6 @@ dependencies:
     - samtools  
     - bwa
     - bcftools 
+    - htslib
+    - tabix
+

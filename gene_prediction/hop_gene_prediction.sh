@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#SBATCH --partition long
+#SBATCH --partition medium
 #SBATCH -J iUKHop
 #SBATCH --cpus-per-task=12
 #SBATCH --mem=100G
@@ -17,7 +17,7 @@ braker(){
 geneModelName=$(echo $(basename ${genomeAssembly} .fasta)_$(date | sed 's/[ :]/_/g'))
 echo ${geneModelName}
 mkdir -p ${outdir}/braker
-sbatch ${progDir}/braker.sh ${genomeAssembly} ${outdir}/braker ${geneModelName}
+sbatch -p medium ${progDir}/braker.sh ${genomeAssembly} ${outdir}/braker ${geneModelName}
 }
 
 # bedtoolsIntersect(){

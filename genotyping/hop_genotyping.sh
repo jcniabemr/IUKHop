@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#SBATCH --partition long
+#SBATCH --partition medium
 #SBATCH -J iUKHop
 #SBATCH --cpus-per-task=12
 #SBATCH --mem=100G
@@ -16,52 +16,69 @@ source activate hop_analysis
 outDir=/mnt/shared/projects/niab/iUKHop
 reference=/mnt/shared/projects/niab/iUKHop/reference/newReference/dovetailCascade10ScaffoldsUnmasked.fasta
 
-####Begin analysis 
-for x in $(ls ${outDir}/raw_data/*.gz); do
-	readName=$(basename ${x} .FASTQ.gz) 
+# ####Build reference index for later
+# bwa index ${reference}
 
-####Read quality assesment 
-	mkdir -p ${outDir}/fastqc/${readName}
-	fastqc \
-		-t $(nproc) \
-		-o ${outDir}/fastqc/${readName} \
-		${x}
+# ####Begin analysis 
+# for x in $(ls ${outDir}/raw_data/*.gz); do
+# 	readName=$(basename ${x} .FASTQ.gz) 
 
-####Read quality and length filtering 
-	mkdir -p ${outDir}/filteredReads/${readName}
-	fastp \
-		--in1 ${x} \
-		--out1 ${outDir}/filteredReads/${readName}/${readName}_filtered.fastq \
-		--json ${outDir}/filteredReads/${readName}/${readName}_filtered.json \
-		--html ${outDir}/filteredReads/${readName}/${readName}_filtered.html \
-		--cut_mean_quality 20 \
-		--length_required 50
-	filteredRead=${outDir}/filteredReads/${readName}/${readName}_filtered.fastq
+# ####Read quality assesment 
+# 	mkdir -p ${outDir}/fastqc/${readName}
+# 	fastqc \
+# 		-t $(nproc) \
+# 		-o ${outDir}/fastqc/${readName} \
+# 		${x}
 
-####Read alignment 
-	mkdir -p ${outDir}/alignment/${readName}
-	flowcell=$(grep "@" ${filteredRead} | cut -d ":" -f3 | uniq -c | sort -nr | head -n 1 | awk '{print $2}')
-	readGroup="@RG\\tID:${readName}.1.${flowcell}\\tPU:${readName}.1.${flowcell}\\tPL:Illumina\\tLB:${readName}.${flowcell}\\tSM:${readName}"
-	bwa mem \
-	 	-t $(nproc) \
-	 	-M \
-	 	-R ${readGroup} \
-	 	${reference} \
-	 	${filteredRead} \
-	 	| samtools view -b - | samtools fixmate -mc - - | samtools sort - -O 'BAM' -o \
-	 	${outDir}/alignment/${readName}/${readName}_aligned_sorted.bam
-	samtools flagstat ${outDir}/alignment/${readName}/${readName}_aligned_sorted.bam > ${outDir}/alignment/${readName}/${readName}_alignmentStats.txt
+# ####Read quality and length filtering 
+# 	mkdir -p ${outDir}/filteredReads/${readName}
+# 	fastp \
+# 		--in1 ${x} \
+# 		--out1 ${outDir}/filteredReads/${readName}/${readName}_filtered.fastq \
+# 		--json ${outDir}/filteredReads/${readName}/${readName}_filtered.json \
+# 		--html ${outDir}/filteredReads/${readName}/${readName}_filtered.html \
+# 		--cut_mean_quality 20 \
+# 		--length_required 50
+#  	filteredRead=${outDir}/filteredReads/${readName}/${readName}_filtered.fastq
+
+# ####Read alignment 
+# 	mkdir -p ${outDir}/alignment/${readName}
+# 	flowcell=$(grep "@" ${filteredRead} | cut -d ":" -f3 | uniq -c | sort -nr | head -n 1 | awk '{print $2}')
+# 	readGroup="@RG\\tID:${readName}.1.${flowcell}\\tPU:${readName}.1.${flowcell}\\tPL:Illumina\\tLB:${readName}.${flowcell}\\tSM:${readName}"
+# 	bwa mem \
+# 	 	-t $(nproc) \
+# 	 	-M \
+# 	 	-R ${readGroup} \
+# 	 	${reference} \
+# 	 	${filteredRead} \
+# 	 	| samtools view -b - | samtools fixmate -mc - - | samtools sort - -O 'BAM' -o \
+# 	 	${outDir}/alignment/${readName}/${readName}_aligned_sorted.bam
+# 	samtools flagstat ${outDir}/alignment/${readName}/${readName}_aligned_sorted.bam > ${outDir}/alignment/${readName}/${readName}_alignmentStats.txt
+# done 
+
+####Variant calling
+batch=1
+filecount=$(ls ${outDir}/alignment | wc -l)
+for i in $(seq 100 100 $((${filecount}+100))); do 
+	if [ ${filecount} -gt 100 ]; then
+		bamList=$(ls ${outDir}/alignment/*/*.bam | head -n ${i} | tail -n 100)
+	else
+		bamList=$(ls ${outDir}/alignment/*/*.bam | head -n ${i} | tail -n ${filecount})
+	fi
+	filecount=$((filecount-100))
+	mkdir -p ${outDir}/variantCalling
+	bcftools mpileup \
+		-Ou \
+		--bam-list <(for x in ${bamList}; do echo ${x}; done) \
+		-q 20 \
+		-C 50 \
+		-a AD,DP \
+		-f ${reference} | bcftools call --ploidy 2 -c -v -Ov > ${outDir}/variantCalling/batch_${batch}_bcfTools_DArTseq_VariantCalls_Raw.vcf
+	((batch++))
 done 
 
-####Variant calling 
-mkdir -p ${outDir}/variantCalling
-bcftools mpileup \
--Ou \
---bam-list <(for x in $(ls ${outDir}/alignment/*/*bam); do echo ${x}; done) \
--q 20 \
--C 50 \
--a AD,DP \
--f ${reference} | bcftools call --ploidy 2 -c -v -Ov > ${outDir}/variantCalling/bcfToolsDArTseqVariantCallsRaw.vcf
+####Merge VCFs
+bcftools merge $(for x in $(ls ${outDir}/variantCalling/*); do bgzip ${x}; tabix ${x}.gz; echo ${x}.gz; done) -Ov -o ${outDir}/variantCalling/raw_concatenated.vcf
 
 # ####Create CM plot 
 # python /mnt/shared/home/jconnell/git_repos/niab_repos/iUKHop/CMplot.py \

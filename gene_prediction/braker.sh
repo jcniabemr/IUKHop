@@ -23,7 +23,7 @@ cd ${TMPDIR}
   --AUGUSTUS_BIN_PATH=/mnt/shared/scratch/jconnell/apps/Augustus/bin \
   --AUGUSTUS_SCRIPTS_PATH=/mnt/shared/scratch/jconnell/apps/Augustus/scripts \
   --BAMTOOLS_PATH=/mnt/shared/scratch/jconnell/apps/bamtools/bin \
-  --GENEMARK_PATH=/mnt/destiny/sandbox/jconnell/geneMark/gmes_linux_64_4 \
+  --GENEMARK_PATH=/mnt/shared/scratch/jconnell/genemark/gmes_linux_64_4 \
   --SAMTOOLS_PATH=/mnt/shared/scratch/jconnell/samtools/samtools-1.19.2 \
   --PROTHINT_PATH=/mnt/shared/scratch/jconnell/apps/ProtHint/ProtHint-2.6.0/bin \
   --ALIGNMENT_TOOL_PATH=/home/jconnell/miniconda3/pkgs/spaln-2.4.7-pl5262h9a82719_0/bin \
@@ -39,6 +39,7 @@ cd ${TMPDIR}
   --softmasking on \
   --species=${geneModelName} \
   --genome="assembly.fa" \
+  --prot_seq=/mnt/shared/projects/niab/iUKHop/genePrediction/maskedCascadePrimaryAllTranscripts.pep.fasta
 
 cp -r braker/* $OutDir
 

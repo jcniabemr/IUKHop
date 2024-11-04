@@ -13,7 +13,7 @@ if  [[ ${calculatedMD5} != ${md5} ]]; then
 		reDownloadData ${sample}
 else
 		echo "The sample ${sample} has an expected MD5 of ${md5} and the calcualted MD5 was ${calculatedMD5}, MD5 sums match, checking next sample."
-		echo "Sample ${sample} has a calculated MD5 sum of ${calculatedMD5} and an expected MD5 sum of ${md5}, download successdful" >> md5Log.txt
+		echo "Sample ${sample} has a calculated MD5 sum of ${calculatedMD5} and an expected MD5 sum of ${md5}, download successful" >> md5Log.txt
 fi
 }
 
