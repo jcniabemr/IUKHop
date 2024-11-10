@@ -4,11 +4,15 @@ channels:
     - bioconda 
 dependencies:
     - python=3.9
+    - R 
     - fastqc
     - fastp
     - samtools  
     - bwa
-    - bcftools 
+    - bcftools
+    - vcftools  
     - htslib
     - tabix
-
+    - snpeff
+    - numpy
+    - pandas
