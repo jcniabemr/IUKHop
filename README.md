@@ -58,7 +58,3 @@ Run analysis pipeline:
 
 	sbatch hop_genotyping/hop_analysis.sh
 
-
-Create gene annotations: 
-
-	sbatch gene_prediction/hop_gene_prediction.sh 
