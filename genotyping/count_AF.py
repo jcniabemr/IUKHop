@@ -24,9 +24,9 @@ def filterAlleleFreq(vcf):
 					alleleDict["_".join(x[0:2])]["Ref"] += 1
 	
 		for x in data[1:]:
-			if alleleDict["_".join(x[0:2])]["Ref"]/(alleleDict["_".join(x[0:2])]["Ref"]+alleleDict["_".join(x[0:2])]["Alt"])*100 < 5 or \
-			alleleDict["_".join(x[0:2])]["Alt"]/(alleleDict["_".join(x[0:2])]["Ref"]+alleleDict["_".join(x[0:2])]["Alt"])*100 < 5:
+			if alleleDict["_".join(x[0:2])]["Alt"]/(alleleDict["_".join(x[0:2])]["Ref"]+alleleDict["_".join(x[0:2])]["Alt"])*100 > 15:
 				out.write("\t".join(x) + "\n")
+			
 
 def main():
 	ap = argparse.ArgumentParser()
